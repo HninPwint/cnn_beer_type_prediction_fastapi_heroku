@@ -9,8 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
-
-from imblearn.over_sampling import SMOTE
+#from imblearn.over_sampling import SMOTE
 
 class BeerData(Enum):
     '''List of members to identify the name of each dataset stored in the raw_data folder.
@@ -46,7 +45,7 @@ class DataReader:
         data = data.rename(columns = lambda x: x.strip(" "))
         return(data)
 
-    def split_data(self, data, relative_path = "../"):
+    def split_data(self, data, target_column, relative_path = "../"):
         ''' Split the given dataset into two sets randlomly
             such as Train and Validation sets by 80:20 ratio and 
             save the split data into the project's /data/processed directory 
@@ -68,16 +67,17 @@ class DataReader:
             y_train: A separate array of target column values from training set(X_train)
             y_val:  A separate array of target column values from validation set(X_val)      
         '''
-        data = pd.DataFrame(data)
-        target = data.pop('TARGET_5Yrs')
-        X_train, X_val, y_train, y_val = train_test_split(data, target, test_size = 0.2, random_state=8, shuffle=True )
+        #data = pd.DataFrame(data)
+        data_copy = data.copy()
+        target = data_copy.pop(target_column)
+        X_train, X_val, y_train, y_val = train_test_split(data_copy, target, test_size = 0.2, random_state=8, shuffle=True )
 
         # Save the splited data
         np.save(relative_path+ "data/processed/X_train", X_train)
-        np.save(relative_path+ "data/processed/X_train", X_val)
+        np.save(relative_path+ "data/processed/X_val", X_val)
 
-        np.save(relative_path+ "data/processed/X_train", y_train)
-        np.save(relative_path+ "data/processed/X_train", y_val)
+        np.save(relative_path+ "data/processed/y_train", y_train)
+        np.save(relative_path+ "data/processed/y_val", y_val)
         return(X_train, X_val, y_train, y_val)
 
     def select_feature_by_correlation(self, data, columns_to_drop):
@@ -98,8 +98,9 @@ class DataReader:
 
         '''
         
-        data.drop(columns_to_drop, axis=1, inplace=True )
-        corr = data.corr()
+        data_copy = data.copy()
+        data_copy.drop(columns_to_drop, axis=1, inplace=True )
+        corr = data_copy.corr()
         sns.heatmap(corr)
 
         columns = np.full((corr.shape[0],), True, dtype=bool)
@@ -111,7 +112,14 @@ class DataReader:
         selected_columns = data.columns[columns]
         return selected_columns
 
-    
+    def plot_correlation(self, data, columns_to_drop):
+
+        data_copy = data.copy()
+        data_copy.drop(columns_to_drop, axis=1, inplace=True )
+        corr = data.corr()
+        sns.heatmap(corr)
+
+
     def scale_features_by_standard_scaler(self, df):
         '''
             This function scales all the features included in the dataframe using Standard Scaler
@@ -175,27 +183,27 @@ class DataReader:
         pl.columns = ['Target']
         pl.Target.value_counts().plot(kind="bar", title="Count Target")
         
-    def resample_data_upsample_smote(self, X, y):
-        '''
-            This function does oversampling the minority class using SMOTE from imblearn and 
-            then fit and apply it in one step.
+    # def resample_data_upsample_smote(self, X, y):
+    #     '''
+    #         This function does oversampling the minority class using SMOTE from imblearn and 
+    #         then fit and apply it in one step.
 
-            Arguments:
-            ----------
-            X: a panda dataframe with the features only
-            y: an array of target variable
+    #         Arguments:
+    #         ----------
+    #         X: a panda dataframe with the features only
+    #         y: an array of target variable
 
-            Returns:
-            -------
-            X_res:  a panda dataframe
-                    a transformed version of the dataset with all features after upsampling
-            y_res: an array of target values after upsampling
+    #         Returns:
+    #         -------
+    #         X_res:  a panda dataframe
+    #                 a transformed version of the dataset with all features after upsampling
+    #         y_res: an array of target values after upsampling
 
-        '''
+    #     '''
         
-        sm = SMOTE(random_state = 23, sampling_strategy = 1.0)
-        X_res, y_res = sm.fit_resample(X, y.ravel())
-        return( X_res, y_res)
+    #     sm = SMOTE(random_state = 23, sampling_strategy = 1.0)
+    #     X_res, y_res = sm.fit_resample(X, y.ravel())
+    #     return( X_res, y_res)
     
     def clean_negatives(self, strategy, df):
         '''
@@ -281,6 +289,23 @@ def plot_roc(true, pred):
     plt.xlim([-0.1,1.0])
     plt.xlim([-0.1,1.01])
     return(plt)
+
+def read_data(self, relative_path = "../"):
+        '''Read the CSV file and load it into a data frame.
+        
+           Argument:
+               source (enum): the member name of the dataset that will be loaded, e.g., BeerData.RAW 
+           
+           Return:
+               a data frame that store the dataset
+        '''
+        source = relative_path + "data/raw/beer_reviews.csv"
+            
+        #read the data and load them into a dataframe
+        data = pd.read_csv(self.filepath[source])
+        #for consistency purposes, change the case of the column names into a lower case and remove extra spaces
+        data = data.rename(columns = lambda x: x.strip(" "))
+        return(data)
 
 def eval_report(true, pred):
     '''
