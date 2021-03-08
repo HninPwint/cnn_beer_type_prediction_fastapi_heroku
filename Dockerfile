@@ -1,15 +1,11 @@
-FROM jupyter/scipy-notebook:0ce64578df46
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
 
-RUN conda install yellowbrick
+COPY requirements.txt .
 
-RUN pip install mlflow==1.13
+RUN pip3 install -r requirements.txt
 
-RUN pip install psycopg2-binary==2.8.5
+COPY ./app /app
 
-RUN pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchtext==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
+COPY ./models /models
 
-ENV PYTHONPATH "${PYTHONPATH}:/home/jovyan/work"
-
-RUN echo "export PYTHONPATH=/home/jovyan/work" >> ~/.bashrc
-
-WORKDIR /home/jovyan/work
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-c", "/gunicorn_conf.py", "main:app"]
