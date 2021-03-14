@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset, DataLoader
 from torch import Tensor
+from sklearn.preprocessing import LabelEncoder
 
 class PytorchDataset(Dataset):
     """
@@ -203,3 +204,12 @@ def predict(row, model):
     prediction = yhat.detach().numpy()
     return(prediction)
 
+class New_LabelEncoder(LabelEncoder):
+    def fit(self, X, y=None):
+        return super(New_LabelEncoder, self).fit(X)
+    def transform(self, X, y=None):
+        return super(New_LabelEncoder, self).transform(X)
+    def fit_transform(self, X, y=None):
+        return super(New_LabelEncoder, self).fit(X).transform(X)
+    def inverse_transform(self, X, y=None):
+        return super(New_LabelEncoder, self).inverse_transform(X) 

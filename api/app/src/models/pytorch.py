@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset, DataLoader
 from torch import Tensor
+from sklearn.preprocessing import LabelEncoder
 
 class PytorchDataset(Dataset):
     """
@@ -46,12 +47,14 @@ class PytorchMultiClass(nn.Module):
     def __init__(self, num_features):
         super(PytorchMultiClass, self).__init__()
         
-        self.layer_1 = nn.Linear(num_features, 70)
-        self.layer_out = nn.Linear(70, 104)
+        self.layer_1 = nn.Linear(num_features, 80)
+        self.layer_2 = nn.Linear(80, 100)
+        self.layer_out = nn.Linear(100, 104)
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
         x = F.dropout(F.relu(self.layer_1(x)), training=self.training)
+        x = F.dropout(F.relu(self.layer_2(x)), training=self.training)
         x = self.layer_out(x)
         return self.softmax(x)
 
@@ -201,3 +204,12 @@ def predict(row, model):
     prediction = yhat.detach().numpy()
     return(prediction)
 
+class New_LabelEncoder(LabelEncoder):
+    def fit(self, X, y=None):
+        return super(New_LabelEncoder, self).fit(X)
+    def transform(self, X, y=None):
+        return super(New_LabelEncoder, self).transform(X)
+    def fit_transform(self, X, y=None):
+        return super(New_LabelEncoder, self).fit(X).transform(X)
+    def inverse_transform(self, X, y=None):
+        return super(New_LabelEncoder, self).inverse_transform(X) 

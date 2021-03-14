@@ -1,57 +1,30 @@
-beer_type_prediction
+
+Beer Type Predictor
 ==============================
+This project contains a series of ML model experiments that predict the beer type based on the review data.
 
-This is a ML model to predict the type of beer and to deploy to Production
+Installation instructions
+-------------------------
+1. Extract all files contained in AT-2-TinHnin-13738339.zip to ../beer_type_prediction/
 
-Project Organization
-------------
+2. Build the Dockerfile using the following cmd:
+	$ docker build beer-type-prediction-nb:latest .
 
-    ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
+3. Run the Dockerfile using the following cmd:
+
+	Win10 Powershell: docker run  -dit --rm --name beer-notebook -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes -v  "%cd%":/home/jovyan/work -v  "%cd%"/src:/home/jovyan/work/src beer-type-prediction-nb
+	Mac: docker run -dit --rm --name beer-notebook -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes -v "$PWD"/..:/home/jovyan/work  beer-type-prediction-nb
+4. Run the cmd:
+	$ docker logs --tail 50 beer-notebook
+
+5. Find the token URLs (Look for the log lines:  "Copy and paste one of these URLs:
+        http://2e9ff17c0ec0:8888/?token=9bfe05a109da341ac2787ca20b710d4c4457ec9ab4c9483c
+     or http://127.0.0.1:8888/?token=9bfe05a109da341ac2787ca20b710d4c4457ec9ab4c9483c")
+
+6. Copy and paste the URL into a web browser to launch the Jupyter Notebook
+
+7. Navigate to ../notebooks/ and open '11_Final.ipynb' for our chosen model
+
+8. Run the notebook commands to obtain the results
 
 
---------
-
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
