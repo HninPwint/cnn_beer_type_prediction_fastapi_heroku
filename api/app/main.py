@@ -9,12 +9,10 @@ from joblib import load
 import numpy as np
 import pandas as pd
 import torch
-from src.models.pytorch import New_LabelEncoder
 import os
 import sys
 sys.path.append(os.path.abspath('../'))
-
-
+from src.models.pytorch import New_LabelEncoder
 
 app = FastAPI()
 
@@ -52,7 +50,7 @@ def make_predictions(obs):
 
     # Decode the predicted encoded target using inverse_transform method   
     le = load('../models/pipeline/te_pipeline.sav')
-    pred_name = le.inverse_transform(prediction.tolist())[0]
+    pred_name = le.inverse_transform(prediction.tolist())
     return pred_name
 
 @app.get("/")
@@ -72,23 +70,8 @@ def predict_single(brewery_name: str, review_aroma: int, review_appearance:int, 
                        'review_appearance': [review_appearance],
                        'review_palate': [review_palate],
                        'review_taste': [review_taste]})
-
-    
-    trained_encoder = load( '../models/pipeline/trained_encoder.sav')
-    obs_trans = trained_encoder.transform(obs)
-
-    #  Convert data to tensor format
-    device = get_device()
-    df_tensor= torch.Tensor(np.array(obs_trans)).to(device)
-
-    #  Make Prediction
-    prediction = model(df_tensor).argmax(1)
-
-    # Decode the predicted encoded target using inverse_transform method   
-    le = load('../models/pipeline/te_pipeline.sav')
-    pred_name = le.inverse_transform(prediction.tolist())[0]
-    # pred = make_predictions(obs)
-    return pred_name
+    pred_name = make_predictions(obs)
+    return pred_name[0]
 
 ### Target
 @app.post('/beer/type/many')
@@ -103,21 +86,7 @@ def predict_many(brewery_name: List[str] = Query(None), review_aroma: List[int] 
                         'review_taste': tuple(review_taste)}, 
                         columns= ['brewery_name', 'review_aroma', 'review_appearance', 'review_palate', 'review_taste'])
 
-
-     # pred_name = make_predictions(obs)
-     trained_encoder = load( '../models/pipeline/trained_encoder.sav')
-     obs_trans = trained_encoder.transform(obs)
-
-     #  Convert data to tensor format
-     device = get_device()
-     df_tensor= torch.Tensor(np.array(obs_trans)).to(device)
-
-     #  Make Prediction
-     prediction = model(df_tensor).argmax(1)
-
-     # Decode the predicted encoded target using inverse_transform method   
-     le = load('../models/pipeline/te_pipeline.sav')
-     pred_name = le.inverse_transform(prediction.tolist())
+     pred_name = make_predictions(obs)  
      return JSONResponse(pred_name.tolist())
                 
 
@@ -154,24 +123,5 @@ def predict_many_json(item: Item = Body(..., embed=True)):
                         'review_palate': item.review_palate,
                         'review_taste': item.review_taste}, columns= ['brewery_name', 'review_aroma', 'review_appearance', 'review_palate', 'review_taste'])
 
-    
-    trained_encoder = load( '../models/pipeline/trained_encoder.sav')
-    obs_trans = trained_encoder.transform(obs)
-
-    #  Convert data to tensor format
-    device = get_device()
-    df_tensor= torch.Tensor(np.array(obs_trans)).to(device)
-
-    #  Make Prediction
-    prediction = model(df_tensor).argmax(1)
-
-    # Decode the predicted encoded target using inverse_transform method   
-    le = load('../models/pipeline/te_pipeline.sav')
-    pred_name = le.inverse_transform(prediction.tolist())
+    pred_name = make_predictions(obs)  
     return JSONResponse(pred_name.tolist())
-    
-
-
-
-
-

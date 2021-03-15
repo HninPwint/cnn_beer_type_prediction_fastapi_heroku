@@ -8,11 +8,13 @@ Installation instructions
 1. Extract all files contained in AT-2-TinHnin-13738339.zip to ../beer_type_prediction/
 
 2. Build the Dockerfile using the following cmd:
-	$ docker build beer-type-prediction-nb:latest .
+
+	$ docker build -t beer-type-prediction-nb:latest .
 
 3. Run the Dockerfile using the following cmd:
 
 	Win10 Powershell: docker run  -dit --rm --name beer-notebook -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes -v  "%cd%":/home/jovyan/work -v  "%cd%"/src:/home/jovyan/work/src beer-type-prediction-nb
+	
 	Mac: docker run -dit --rm --name beer-notebook -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes -v "$PWD"/..:/home/jovyan/work  beer-type-prediction-nb
 4. Run the cmd:
 	$ docker logs --tail 50 beer-notebook
