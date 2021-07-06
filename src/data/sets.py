@@ -1,3 +1,11 @@
+import pandas as pd
+from pathlib import Path, WindowsPath
+from dotenv import find_dotenv
+from typing import Tuple
+from sklearn.model_selection import train_test_split
+
+project_dir = Path(find_dotenv()).parent
+
 def subset_x_y(target, features, start_index:int, end_index:int):
 
     '''
@@ -17,7 +25,52 @@ def split_sets_by_time(df, target_col, test_ratio=0.2, to_numpy=False):
 
     return X_train, y_train, X_val, y_val, X_test, y_test
 
-def save_sets(X_train=None, y_train=None, X_val=None, y_val=None, X_test=None, y_test=None, path='../data/processed/'):
+def split_sets_random(df, target_col, test_ratio=0.2, to_numpy=False):
+    """Split sets randomly
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe
+    target_col : str
+        Name of the target column
+    test_ratio : float
+        Ratio used for the validation and testing sets (default: 0.2)
+    Returns
+    -------
+    Numpy Array
+        Features for the training set
+    Numpy Array
+        Target for the training set
+    Numpy Array
+        Features for the validation set
+    Numpy Array
+        Target for the validation set
+    Numpy Array
+        Features for the testing set
+    Numpy Array
+        Target for the testing set
+    """
+    features, target = pop_target(df=df, target_col=target_col,
+                                  to_numpy=to_numpy)
+
+    X_data, X_test, y_data, y_test = train_test_split(features, target,
+                                                      test_size=test_ratio,
+                                                      random_state=8)
+
+    val_ratio = test_ratio / (1 - test_ratio)
+    X_train, X_val, y_train, y_val = train_test_split(X_data, y_data,
+                                                      test_size=val_ratio,
+                                                      random_state=8)
+
+    return X_train, y_train, X_val, y_val, X_test, y_test
+
+def save_sets(X_train: pd.DataFrame = None,
+              y_train: pd.Series = None,
+              X_val: pd.DataFrame = None,
+              y_val: pd.Series = None,
+              X_test: pd.DataFrame = None,
+              y_test: pd.Series = None,
+              path: WindowsPath = None):
     """Save the different sets locally
 
     Parameters
@@ -40,96 +93,45 @@ def save_sets(X_train=None, y_train=None, X_val=None, y_val=None, X_test=None, y
     Returns
     -------
     """
-    import numpy as np
-
     if X_train is not None:
-      np.save(f'{path}X_train', X_train)
-    if X_val is not None:
-      np.save(f'{path}X_val',   X_val)
-    if X_test is not None:
-      np.save(f'{path}X_test',  X_test)
+        X_train.to_csv(path.joinpath('X_train.csv'), index=False)
     if y_train is not None:
-      np.save(f'{path}y_train', y_train)
+        y_train.to_csv(path.joinpath('y_train.csv'), index=False)
+    if X_val is not None:
+        X_val.to_csv(path.joinpath('X_val.csv'), index=False)
     if y_val is not None:
-      np.save(f'{path}y_val',   y_val)
+        y_val.to_csv(path.joinpath('y_val.csv'), index=False)
+    if X_test is not None:
+        X_test.to_csv(path.joinpath('X_test.csv'), index=False)
     if y_test is not None:
-      np.save(f'{path}y_test',  y_test)
+        y_test.to_csv(path.joinpath('y_test.csv'), index=False)
 
+# def load_sets(path: WindowsPath = project_dir / 'data/processed') -> \
 
-def load_sets(path='../data/processed/', val=True):
-    """Load the different locally save sets
+# def load_sets(path ='../../data/processed') -> str:
+#     import os
+#     return (os.path.join(path, "X_train.csv"))
 
-    Parameters
-    ----------
-    path : str
-        Path to the folder where the sets are saved (default: '../data/processed/')
-
-    Returns
-    -------
-    Numpy Array
-        Features for the training set
-    Numpy Array
-        Target for the training set
-    Numpy Array
-        Features for the validation set
-    Numpy Array
-        Target for the validation set
-    Numpy Array
-        Features for the testing set
-    Numpy Array
-        Target for the testing set
+def load_sets(path ='../../data/processed') -> \
+        Tuple[pd.DataFrame,
+              pd.DataFrame,
+              pd.Series,
+              pd.Series]:
     """
-    import numpy as np
-    import os.path
-    import sys
-
-    X_train = np.load(f'{path}X_train.npy',allow_pickle=True) if os.path.isfile(f'{path}X_train.npy') else None
-    X_val   = np.load(f'{path}X_val.npy' , allow_pickle=True ) if os.path.isfile(f'{path}X_val.npy')   else None
-    X_test  = np.load(f'{path}X_test.npy', allow_pickle=True ) if os.path.isfile(f'{path}X_test.npy')  else None
-    y_train = np.load(f'{path}y_train.npy', allow_pickle=True) if os.path.isfile(f'{path}y_train.npy') else None
-    y_val   = np.load(f'{path}y_val.npy',allow_pickle=True ) if os.path.isfile(f'{path}y_val.npy')   else None
-    y_test  = np.load(f'{path}y_test.npy', allow_pickle=True ) if os.path.isfile(f'{path}y_test.npy')  else None
-    
-    return X_train, y_train, X_val, y_val, X_test, y_test
-
-def split_sets_random(df, target_col, test_ratio=0.2, to_numpy=False):
-    """Split sets randomly
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Input dataframe
-    target_col : str
-        Name of the target column
-    test_ratio : float
-        Ratio used for the validation and testing sets (default: 0.2)
-
-    Returns
-    -------
-    Numpy Array
-        Features for the training set
-    Numpy Array
-        Target for the training set
-    Numpy Array
-        Features for the validation set
-    Numpy Array
-        Target for the validation set
-    Numpy Array
-        Features for the testing set
-    Numpy Array
-        Target for the testing set
+    :param path:
+    :return:
     """
-    
-    from sklearn.model_selection import train_test_split
-    
-    features, target = pop_target(df=df, target_col=target_col, to_numpy=to_numpy)
-    
-    X_data, X_test, y_data, y_test = train_test_split(features, target, test_size=test_ratio, random_state=8)
-    
-    val_ratio = test_ratio / (1 - test_ratio)
-    X_train, X_val, y_train, y_val = train_test_split(X_data, y_data, test_size=val_ratio, random_state=8)
+    import os
+   
+    X_train = pd.read_csv(os.path.join(path, "X_train.csv"))
+    X_test = pd.read_csv(os.path.join(path,"X_test.csv"))
+    X_val = pd.read_csv(os.path.join(path,"X_val.csv"))
+    y_train = pd.read_csv(os.path.join(path,"y_train.csv"))
+    y_test = pd.read_csv(os.path.join(path,"y_test.csv"))
+    y_val = pd.read_csv(os.path.join(path,"y_val.csv"))
 
-    return X_train, y_train, X_val, y_val, X_test, y_test
+    return X_train, X_test, X_val, y_train, y_test, y_val
+
 
 def pop_target(df, target_col, to_numpy=False):
     """Extract target variable from dataframe and convert to nympy arrays if required
