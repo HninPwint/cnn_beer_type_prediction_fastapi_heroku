@@ -107,12 +107,14 @@ def save_sets(X_train: pd.DataFrame = None,
         y_test.to_csv(path.joinpath('y_test.csv'), index=False)
 
 # def load_sets(path: WindowsPath = project_dir / 'data/processed') -> \
+# def load_sets(path ='../data/processed') -> \
 
 # def load_sets(path ='../../data/processed') -> str:
 #     import os
 #     return (os.path.join(path, "X_train.csv"))
 
-def load_sets(path ='../../data/processed') -> \
+
+def load_sets(path: WindowsPath = project_dir / 'data/processed') -> \
         Tuple[pd.DataFrame,
               pd.DataFrame,
               pd.Series,

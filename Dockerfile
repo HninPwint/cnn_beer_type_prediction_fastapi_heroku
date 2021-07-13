@@ -1,8 +1,5 @@
-##FROM jupyter/scipy-notebook:0ce64578df46
-
-#FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
-
-#WORKDIR /
+####### Model Training Notebook ######
+#FROM jupyter/scipy-notebook:0ce64578df46
 
 #COPY requirements.txt .
 
@@ -18,6 +15,8 @@
 
 #WORKDIR /home/jovyan/work
 
+
+##### App Deployment Docker ###
 
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
 

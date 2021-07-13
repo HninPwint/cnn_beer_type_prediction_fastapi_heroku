@@ -13,7 +13,7 @@ def get_device():
     return device
 
 
-class PytorchClassification_2(nn.Module):
+class PytorchClassification_1(nn.Module):
     def __init__(self, n_features: int, n_classes: int):
         super().__init__()
         self.layer_1 = nn.Linear(n_features, 256)
@@ -40,7 +40,7 @@ class PytorchClassification_2(nn.Module):
         return x
 
 
-class PytorchClassification_3(nn.Module):
+class PytorchClassification_2(nn.Module):
     def __init__(self, n_features: int, n_classes: int):
         super().__init__()
         self.layer_1 = nn.Linear(n_features, 512)
