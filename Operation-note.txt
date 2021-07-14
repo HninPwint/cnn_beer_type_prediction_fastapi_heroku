@@ -1,0 +1,17 @@
+
+To Run the Jupyter Notebook for Experiment:
+Build the docker (the first part of Docker) for Notebook
+
+docker build pytorch-notebook:latest .
+docker run  -dit --rm --name beer_type_prediction -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes -v "%cd%":/home/jovyan/work -v "%cd%"/src:/home/jovyan/work/src pytorch-notebook:latest 
+docker logs --tail 50 beer_type_prediction
+
+
+
+Url https://calm-bastion-53719.herokuapp.com/docs
+
+https://colab.research.google.com/drive/1NEf8-64iAt-CcyCJlWRhuvuuNihSPtma?usp=sharing#scrollTo=kWHRr-v5jmhP
+
+1)docker build -t pytorch-notebook:latest .  
+2)docker run  -dit --rm --name beer_type_prediction -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes -v "%cd%":/home/jovyan/work -v "%cd%" pytorch-notebook:latest
+3)
