@@ -1,7 +1,21 @@
 
-Beer Type Predictor
-==============================
-This project contains a series of ML model experiments that predict the beer type based on the review data.
+#### To Run the Jupyter Notebook for Experiment ###
+1) Turn on / Uncomment the (the first part of Docker) and comment the second part to run Jupyter Lab
+   Build the docker by
+2)```docker build pytorch-notebook:latest .```
+3) ```docker run  -dit --rm --name beer_type_prediction -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes -v "%cd%":/home/jovyan/work -v "%cd%"/src:/home/jovyan/work/src pytorch-notebook:latest ```
+4) ```docker logs --tail 50 beer_type_prediction```
+5) Copy and paste the url in the log to the browser to load the jupyter lab and start the experiment
+
+
+##### To build the FAST API app and Deploy to Heroku ##########
+
+1)Turn on / Uncomment the (the second part of Docker) and comment the first part to run Jupyter Lab
+   Build the docker by running
+2)``` docker build -t beer-fastapi:latest . ```
+3) ``` docker run -dit --rm --name beer-fastapi -p 8080:80 beer-fastapi:latest ```
+4)``` docker logs --tail 50 beer-fastapi ```
+
 
 Installation instructions
 -------------------------
