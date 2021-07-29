@@ -34,7 +34,7 @@ def read_root():
                    '`review_appearance`': 'float or List[float]',
                    '`review_palate`': 'float or List[float]',
                    '`review_palate`': 'float or List[float]'},
-        'GitHub link': 'https://github.com/roger-yu-ds/assignment_2'
+        'GitHub link': 'https://github.com/HninPwint/cnn_beer_type_prediction_fastapi_heroku'
     }
 
     response = JSONResponse(content=root_dict, status_code=200)
